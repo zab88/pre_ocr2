@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import xlsxwriter
+import xlsxwriter, glob, os
 
 def get_out_name(movie_name, frame_start, frame_end, fps):
     start = int(float(frame_start)/fps)
@@ -26,6 +26,10 @@ def getHMSD(file_name, fps):
     frame_start = int(file_name.split('_')[0])
     frame_end = int(file_name.split('_')[1].replace('.png', ''))
     return '{}-{}'.format(getTimeByFrame(frame_start, fps), getTimeByFrame(frame_end, fps))
+def getHMSD2(file_name, fps):
+    frame_start = int(file_name.split('_')[0])
+    frame_end = int(file_name.split('_')[1].replace('.png', ''))
+    return getTimeByFrame(frame_start, fps), getTimeByFrame(frame_end, fps)
 
 def isNewScene(self, frame_prev, frame_now):
     fgbg = cv2.BackgroundSubtractorMOG()
@@ -42,12 +46,38 @@ def isNewScene(self, frame_prev, frame_now):
         return True
     return False
 
-def make_xlsx():
-    workbook = xlsxwriter.Workbook('hello.xlsx')
+def pull_text_left(img):
+    img_out = None
+    h, w = img.shape[:2]
+    img_negative = (255 - img)
+    for i in xrange(0, w, 1):
+        if sum(img_negative[:, i]) < 1:
+            continue
+        img_out = np.ones((h, w), np.uint8)*255
+        img_out[:, :w-i] = img[:, i:]
+        break
+    if img_out is None:
+        return img
+    return img_out
+
+def make_xlsx(fps):
+    workbook = xlsxwriter.Workbook('out.xlsx')
     worksheet = workbook.add_worksheet()
+    worksheet.set_column(1, 2, 12)
+    worksheet.set_column(3, 4, 100)
 
-    worksheet.write('A1', 'Hello world')
-    worksheet.set_column(0, 1, 300)
-    worksheet.insert_image('B2', 'python.png')
+    j = 0
+    for f_test in glob.glob("out/*.png"):
+        if 'big' in os.path.basename(f_test):
+            continue
+        print(str(j+1000), getHMSD2(os.path.basename(f_test), fps))
+        worksheet.write('A'+str(j+1), str(j+1000))
+        worksheet.write('B'+str(j+1), getHMSD2(os.path.basename(f_test), fps)[0])
+        worksheet.write('C'+str(j+1), getHMSD2(os.path.basename(f_test), fps)[1])
 
+        # image has big height
+        worksheet.set_row(j, 32)
+        worksheet.insert_image('D'+str(j+1), f_test)
+        worksheet.insert_image('E'+str(j+1), 'origin/'+os.path.basename(f_test))
+        j += 1
     workbook.close()

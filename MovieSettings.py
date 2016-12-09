@@ -7,6 +7,7 @@ class MovieSettings:
     cropY = None
     out_path = None
     fps = None
+    origin_path = None
     def __init__(self):
         pass
     def read_settings(self, path2ini):
@@ -23,3 +24,6 @@ class MovieSettings:
 
     def set_out_path(self, out_path):
         MovieSettings.out_path = out_path
+
+    def set_origin_path(self, origin_path):
+        MovieSettings.origin_path = origin_path
