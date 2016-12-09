@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import xlsxwriter
 
 def get_out_name(movie_name, frame_start, frame_end, fps):
     start = int(float(frame_start)/fps)
@@ -14,11 +15,17 @@ def get_out_name(movie_name, frame_start, frame_end, fps):
     return out_name
 
 def getTimeByFrame(frame_number, fps):
-    start = int(float(frame_number)/fps)
-    start_h = start/3600
-    start_m = (start - start_h*3600)/60
-    start_s = start%60
-    return '{}h{:0>2}m{:0>2}s'.format(start_h, start_m, start_s)
+    seconds = int(float(frame_number)/fps)
+    hh = seconds/3600
+    mm = (seconds - hh*3600)/60
+    ss = seconds%60
+    dd = int(10.*float((frame_number - fps*int(frame_number/fps)))/fps)
+    return '{:0>2}:{:0>2}:{:0>2}:{:0<2}'.format(hh, mm, ss, dd)
+
+def getHMSD(file_name, fps):
+    frame_start = int(file_name.split('_')[0])
+    frame_end = int(file_name.split('_')[1].replace('.png', ''))
+    return '{}-{}'.format(getTimeByFrame(frame_start, fps), getTimeByFrame(frame_end, fps))
 
 def isNewScene(self, frame_prev, frame_now):
     fgbg = cv2.BackgroundSubtractorMOG()
@@ -34,3 +41,13 @@ def isNewScene(self, frame_prev, frame_now):
         cv2.imshow('isNew', fgmask)
         return True
     return False
+
+def make_xlsx():
+    workbook = xlsxwriter.Workbook('hello.xlsx')
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write('A1', 'Hello world')
+    worksheet.set_column(0, 1, 300)
+    worksheet.insert_image('B2', 'python.png')
+
+    workbook.close()

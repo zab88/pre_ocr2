@@ -3,6 +3,7 @@ import cv2, os, subprocess, math, glob
 import MovieSettings as mv
 import MovieTimeline as mt
 import MovieFrameSet as mfs
+import helpers as hh
 
 # cleaning out directory, during development
 for f_remove in glob.glob("out/*.png"):
@@ -54,10 +55,20 @@ timeline.process()
 
 # one big image
 img_all = None
+# movieSettings.fps = 25.0
 for f_test in glob.glob("out/*.png"):
     if img_all is None:
         img_all = cv2.imread(f_test, 0)
+        # adding hmsd
+        h, w = img_all.shape[:2]
+        img_hmsd = np.ones((h, 500), np.uint8)*255
+        cv2.putText(img_hmsd, hh.getHMSD(os.path.basename(f_test), movieSettings.fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1)
+        img_all = np.concatenate((img_all, img_hmsd), axis=1)
         continue
     img_now = cv2.imread(f_test, 0)
+    img_hmsd = np.ones((h, 500), np.uint8)*255
+    cv2.putText(img_hmsd, hh.getHMSD(os.path.basename(f_test), movieSettings.fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1)
+    img_now = np.concatenate((img_now, img_hmsd), axis=1)
+
     img_all = np.concatenate((img_all, img_now), axis=0)
 cv2.imwrite('out'+os.sep+'big.png', img_all)

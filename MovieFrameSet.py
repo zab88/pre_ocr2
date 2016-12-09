@@ -59,8 +59,9 @@ class MovieFrameSet:
             self.justStop()
             return
 
-        path_save = self.settings.out_path + \
-                    hh.get_out_name('Lan', self.frames[0].frame_number, self.frames[-1].frame_number, self.settings.fps)
+        # path_save = self.settings.out_path + \
+        #             hh.get_out_name('Lan', self.frames[0].frame_number, self.frames[-1].frame_number, self.settings.fps)
+        path_save = '{}{:0>8}_{:0>8}.png'.format(self.settings.out_path, self.frames[0].frame_number, self.frames[-1].frame_number)
         cv2.imwrite(path_save, (255-imgOut))
         # cv2.imwrite(path_save.replace('.png', 'c.png'), self.getMacroAnd(self.frames[:-1])[0])
         # cv2.imwrite(path_save.replace('.png', 't.png'), self.getMacroAnd(self.frames[:-1])[1])
