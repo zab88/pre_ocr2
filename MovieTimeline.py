@@ -28,7 +28,12 @@ class MovieTimeline:
                 continue
             # if frame_number < 4800:
             #     continue
-            frame = frame[self.settings.cropY[0]:self.settings.cropY[1], self.settings.cropX[0]:self.settings.cropX[1]]
+            if self.settings.is2lines:
+                # split cropped in 2 lines
+                mid_crop = sum(self.settings.cropY)/2
+                frame = frame[mid_crop:self.settings.cropY[1], self.settings.cropX[0]:self.settings.cropX[1]]
+            else:
+                frame = frame[self.settings.cropY[0]:self.settings.cropY[1], self.settings.cropX[0]:self.settings.cropX[1]]
             f_obj = mf.MovieFrame(frame_number, frame)
             frameSet.makeStep(f_obj)
 

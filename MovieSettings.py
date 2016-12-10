@@ -8,6 +8,7 @@ class MovieSettings:
     out_path = None
     fps = None
     origin_path = None
+    is2lines = False
     def __init__(self):
         pass
     def read_settings(self, path2ini):
@@ -18,6 +19,7 @@ class MovieSettings:
         MovieSettings.isNew = int(Config.get('Th', 'isNew'))
         MovieSettings.text_lower = np.array(json.loads(Config.get('Font', 'text_lower')))
         MovieSettings.text_upper = np.array(json.loads(Config.get('Font', 'text_upper')))
+        MovieSettings.is2lines = True if int(Config.get('Movie', 'cropLines'))==2 else False
 
     def set_movie(self, path2movie):
         MovieSettings.path2movie = path2movie

@@ -77,7 +77,7 @@ def make_xlsx(fps):
 
         # image has big height
         worksheet.set_row(j, 32)
-        worksheet.insert_image('D'+str(j+1), f_test)
-        worksheet.insert_image('E'+str(j+1), 'origin/'+os.path.basename(f_test))
+        # worksheet.insert_image('D'+str(j+1), f_test)
+        worksheet.insert_image('D'+str(j+1), 'origin/'+os.path.basename(f_test))
         j += 1
     workbook.close()
