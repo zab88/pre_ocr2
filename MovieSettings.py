@@ -27,6 +27,9 @@ class MovieSettings:
         MovieSettings.minLetterArea = int(Config.get('Th', 'minLetterArea'))
 
     def set_movie(self, path2movie):
+        if path2movie[-4:] in ['.mp4']:
+            MovieSettings.isCut = False
+        MovieSettings.isCut = True
         MovieSettings.path2movie = path2movie
 
     def set_out_path(self, out_path):

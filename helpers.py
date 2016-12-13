@@ -70,10 +70,16 @@ def make_xlsx(fps):
     for f_test in glob.glob("out/*.png"):
         if 'big' in os.path.basename(f_test):
             continue
-        print(str(j+1000), getHMSD2(os.path.basename(f_test), fps))
+        # print(str(j+1000), getHMSD2(os.path.basename(f_test), fps))
+        if fps is None:
+            time_start = os.path.basename(f_test).replace('.png', '').split('_')[0].replace('-', ':')
+            time_end = os.path.basename(f_test).replace('.png', '').split('_')[1].replace('-', ':')
+        else:
+            time_start = getHMSD2(os.path.basename(f_test), fps)[0]
+            time_end = getHMSD2(os.path.basename(f_test), fps)[1]
         worksheet.write('A'+str(j+1), str(j+1000))
-        worksheet.write('B'+str(j+1), getHMSD2(os.path.basename(f_test), fps)[0])
-        worksheet.write('C'+str(j+1), getHMSD2(os.path.basename(f_test), fps)[1])
+        worksheet.write('B'+str(j+1), time_start)
+        worksheet.write('C'+str(j+1), time_end)
 
         # image has big height
         worksheet.set_row(j, 32)

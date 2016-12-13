@@ -8,9 +8,13 @@ class MovieFrame:
     img_gray = None
     img_canny = None
     text_mask = None
-    def __init__(self, frame_number, img):
+    def __init__(self, frame_number, img, frame_name=''):
         # img = cv2.pyrDown(img)
         self.frame_number = frame_number
+        if frame_name != '':
+            self.frame_name = frame_name
+        else:
+            self.frame_name = str(frame_number)
         self.img_origin = img
         # self.img_origin = cv2.medianBlur(img, 5)
         self.img_gray = cv2.cvtColor(self.img_origin, cv2.COLOR_BGR2GRAY)
