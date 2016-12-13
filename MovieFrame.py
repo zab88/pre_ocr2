@@ -9,23 +9,31 @@ class MovieFrame:
     img_canny = None
     text_mask = None
     def __init__(self, frame_number, img):
+        # img = cv2.pyrDown(img)
         self.frame_number = frame_number
         self.img_origin = img
-        self.img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # self.img_origin = cv2.medianBlur(img, 5)
+        self.img_gray = cv2.cvtColor(self.img_origin, cv2.COLOR_BGR2GRAY)
         self.img_canny = cv2.Canny(self.img_gray, 100, 200)
 
         # HSV
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        hsv = cv2.cvtColor(self.img_origin, cv2.COLOR_BGR2HSV)
         text_lower = mv.MovieSettings.text_lower
         text_upper = mv.MovieSettings.text_upper
+        # text_lower = mv.MovieSettings.border_lower
+        # text_upper = mv.MovieSettings.border_upper
         self.text_mask = cv2.inRange(hsv, text_lower, text_upper)
+
+        # self.text_mask = cv2.erode(self.text_mask, np.ones((3, 1), np.uint8))
 
         # text_mask correction
         self.text_mask = cv2.copyMakeBorder(self.text_mask, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=(255))
         cv2.floodFill(self.text_mask, None, (0, 0), (0))
+        # self.text_mask = cv2.dilate(self.text_mask, np.ones((3, 1), np.uint8))
 
         # symmetry correction
-        self.text_mask = self.symmetry_clean(self.text_mask)
+        if mv.MovieSettings.useSymmetry:
+            self.text_mask = self.symmetry_clean(self.text_mask)
 
     def delete_big_blobs(self):
         # http://www.learnopencv.com/blob-detection-using-opencv-python-c/

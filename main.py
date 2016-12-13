@@ -12,8 +12,12 @@ for f_remove in glob.glob("out/*.png"):
 # Loading settings
 current_dir = os.path.dirname(os.path.realpath(__file__))
 movieSettings = mv.MovieSettings()
-movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'LanLing.ini')
-movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'LanLing26.mp4')
+# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'LanLing.ini')
+# movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'LanLing26.mp4')
+# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'Xiang.ini')
+# movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'Xiang35.mp4')
+movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'legendvideo.ini')
+movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'legendvideo.mp4')
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)
 movieSettings.set_origin_path(current_dir+os.sep+'origin'+os.sep)
 

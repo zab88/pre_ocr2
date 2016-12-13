@@ -38,12 +38,12 @@ class MovieFrameSet:
         #                                    hh.getTimeByFrame(self.frames[0].frame_number, self.settings.fps)),
         #             diff_text_mask
         #             )
-        if (cv2.countNonZero(rep_text) > 121) and (cv2.countNonZero(rep_canny) > 40) and isContinue:
+        if (cv2.countNonZero(rep_text) > self.settings.minLetterArea) and (cv2.countNonZero(rep_canny) > 40) and isContinue:
         # if (cv2.countNonZero(rep_text) > 121) and isContinue:
             # can make step
             pass
         # nothing to output
-        elif cv2.countNonZero(self.get_partA(now_text_mask)) < 121:
+        elif cv2.countNonZero(self.get_partA(now_text_mask)) < self.settings.minLetterArea:
             self.justStop()
         else:
             # stop it
@@ -100,7 +100,7 @@ class MovieFrameSet:
     def isEqualBin(bin1, bin2):
         s12 = cv2.countNonZero(bin1) + cv2.countNonZero(bin2)
         th_counted = cv2.countNonZero(np.bitwise_xor(bin1, bin2))
-        if th_counted > (s12*0.05):
+        if th_counted > (s12*0.1): # TODO: param to settings
             return False
         return True
 

@@ -22,6 +22,8 @@ class MovieTimeline:
                 print(frame_number)
                 break
             frame_number += 1
+            # if frame_number < 4000:
+            #     continue
 
             if frame_prev is None:
                 frame_prev = frame
