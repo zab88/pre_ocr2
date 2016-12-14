@@ -10,15 +10,18 @@ usage = '''USAGE
   path_to_movie_or_images should ends on *.jpg or *.png
 '''
 if len(sys.argv)<3:
-    exit(usage)
+    print(usage)
+    sys.exit()
 path_to_settings_ini_file = sys.argv[1]
 path_to_movie_or_images = sys.argv[2]
 if not os.path.isfile(path_to_settings_ini_file):
-    exit('not found <path_to_settings_ini_file>')
+    print('not found <path_to_settings_ini_file>')
+    sys.exit()
 if not os.path.isfile(path_to_movie_or_images):
     # ok, it can be images
     if len(glob.glob(path_to_movie_or_images)) == 0:
-        exit('not found <path_to_movie_or_images>')
+        print('not found <path_to_movie_or_images>')
+        sys.exit()
 path_to_settings_ini_file = os.path.abspath(path_to_settings_ini_file)
 path_to_movie_or_images = os.path.abspath(path_to_movie_or_images)
 
@@ -29,7 +32,8 @@ for f_remove in glob.glob("origin/*.png"):
     os.remove(f_remove)
 
 # Loading settings
-current_dir = os.path.dirname(os.path.realpath(__file__))
+#current_dir = os.path.dirname(os.path.realpath(__file__)) # does not work with py2exe
+current_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 movieSettings = mv.MovieSettings()
 # movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'LanLing.ini')
 # movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'LanLing26.mp4')
