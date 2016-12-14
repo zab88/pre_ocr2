@@ -1,12 +1,31 @@
 import numpy as np
-import cv2, os, subprocess, math, glob
+import cv2, os, subprocess, math, glob, sys
 import MovieSettings as mv
 import MovieTimeline as mt
 import MovieFrameSet as mfs
 import helpers as hh
 
-# cleaning out directory, during development
+usage = '''USAGE
+  python main.py <path_to_settings_ini_file> <path_to_movie_or_images>
+  path_to_movie_or_images should ends on *.jpg or *.png
+'''
+if len(sys.argv)<3:
+    exit(usage)
+path_to_settings_ini_file = sys.argv[1]
+path_to_movie_or_images = sys.argv[2]
+if not os.path.isfile(path_to_settings_ini_file):
+    exit('not found <path_to_settings_ini_file>')
+if not os.path.isfile(path_to_movie_or_images):
+    # ok, it can be images
+    if len(glob.glob(path_to_movie_or_images)) == 0:
+        exit('not found <path_to_movie_or_images>')
+path_to_settings_ini_file = os.path.abspath(path_to_settings_ini_file)
+path_to_movie_or_images = os.path.abspath(path_to_movie_or_images)
+
+# cleaning out and origin directory, during development
 for f_remove in glob.glob("out/*.png"):
+    os.remove(f_remove)
+for f_remove in glob.glob("origin/*.png"):
     os.remove(f_remove)
 
 # Loading settings
@@ -16,9 +35,11 @@ movieSettings = mv.MovieSettings()
 # movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'LanLing26.mp4')
 # movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'Xiang.ini')
 # movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'Xiang35.mp4')
-movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'legendvideo.ini')
+# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'legendvideo.ini')
 # movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'legendvideo.mp4')
-movieSettings.set_movie(current_dir+os.sep+'cut_images'+os.sep+'legend'+os.sep+'*.jpg')
+# movieSettings.set_movie(current_dir+os.sep+'cut_images'+os.sep+'legend'+os.sep+'*.jpg')
+movieSettings.read_settings(path_to_settings_ini_file)
+movieSettings.set_movie(path_to_movie_or_images)
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)
 movieSettings.set_origin_path(current_dir+os.sep+'origin'+os.sep)
 
