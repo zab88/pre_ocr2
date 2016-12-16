@@ -47,7 +47,6 @@ movieSettings.set_movie(path_to_movie_or_images)
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)
 movieSettings.set_origin_path(current_dir+os.sep+'origin'+os.sep)
 movieSettings.set_movie_name(os.path.split(os.path.split(path_to_movie_or_images)[0])[1])
-print(path_to_movie_or_images)
 
 
 # Timeline
