@@ -31,17 +31,17 @@ for f_remove in glob.glob("out/*.png"):
 for f_remove in glob.glob("origin/*.png"):
     os.remove(f_remove)
 
+# if directories does not exist, let's create them
+dirs_mast = ['out', 'origin', 'big', 'xlsx']
+for d in dirs_mast:
+    if not os.path.exists(d):
+        os.makedirs(d)
+
 # Loading settings
 #current_dir = os.path.dirname(os.path.realpath(__file__)) # does not work with py2exe
 current_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 movieSettings = mv.MovieSettings()
-# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'LanLing.ini')
-# movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'LanLing26.mp4')
-# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'Xiang.ini')
-# movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'Xiang35.mp4')
-# movieSettings.read_settings(current_dir+os.sep+'movies'+os.sep+'legendvideo.ini')
-# movieSettings.set_movie(current_dir+os.sep+'movies'+os.sep+'legendvideo.mp4')
-# movieSettings.set_movie(current_dir+os.sep+'cut_images'+os.sep+'legend'+os.sep+'*.jpg')
+
 movieSettings.read_settings(path_to_settings_ini_file)
 movieSettings.set_movie(path_to_movie_or_images)
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)

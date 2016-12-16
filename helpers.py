@@ -77,6 +77,9 @@ def make_xlsx(fps):
         else:
             time_start = getHMSD2(os.path.basename(f_test), fps)[0]
             time_end = getHMSD2(os.path.basename(f_test), fps)[1]
+        time_start = time_start.replace(':', '.', 2) + '0'
+        time_end = time_end.replace(':', '.', 2) + '0'
+
         worksheet.write('A'+str(j+1), str(j+1000))
         worksheet.write('B'+str(j+1), time_start)
         worksheet.write('C'+str(j+1), time_end)
