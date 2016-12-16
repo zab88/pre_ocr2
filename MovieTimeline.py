@@ -30,6 +30,8 @@ class MovieTimeline:
             frame_number += 1
             # if frame_number < 4000:
             #     continue
+            if 0==frame_number%5000:
+                print('processed {} frames'.format(frame_number))
 
             if frame_prev is None:
                 frame_prev = frame
@@ -62,6 +64,8 @@ class MovieTimeline:
         for frame_img in glob.glob(self.settings.path2movie):
             frame = cv2.imread(frame_img)
             frame_number += 1
+            if 0==frame_number%5000:
+                print('processed {} frames'.format(frame_number))
             if frame_prev is None:
                 frame_prev = frame
                 continue

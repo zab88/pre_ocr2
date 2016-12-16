@@ -25,17 +25,17 @@ if not os.path.isfile(path_to_movie_or_images):
 path_to_settings_ini_file = os.path.abspath(path_to_settings_ini_file)
 path_to_movie_or_images = os.path.abspath(path_to_movie_or_images)
 
-# cleaning out and origin directory, during development
-for f_remove in glob.glob("out/*.png"):
-    os.remove(f_remove)
-for f_remove in glob.glob("origin/*.png"):
-    os.remove(f_remove)
-
 # if directories does not exist, let's create them
 dirs_mast = ['out', 'origin', 'big', 'xlsx']
 for d in dirs_mast:
     if not os.path.exists(d):
         os.makedirs(d)
+
+# cleaning out and origin directory, during development
+for f_remove in glob.glob("out/*.png"):
+    os.remove(f_remove)
+for f_remove in glob.glob("origin/*.png"):
+    os.remove(f_remove)
 
 # Loading settings
 #current_dir = os.path.dirname(os.path.realpath(__file__)) # does not work with py2exe
@@ -46,6 +46,9 @@ movieSettings.read_settings(path_to_settings_ini_file)
 movieSettings.set_movie(path_to_movie_or_images)
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)
 movieSettings.set_origin_path(current_dir+os.sep+'origin'+os.sep)
+movieSettings.set_movie_name(os.path.split(os.path.split(path_to_movie_or_images)[0])[1])
+print(path_to_movie_or_images)
+
 
 # Timeline
 timeline = mt.MovieTimeline(movieSettings)
@@ -84,10 +87,10 @@ timeline.process()
 # cv2.imwrite('tmp'+os.sep+img_prev_name, img_prev)
 
 
-# one big image
+# big images and xlsx
 img_all = None
 # movieSettings.fps = 25.0
-hh.make_xlsx(movieSettings.fps)
+hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
 f_j = 0
 big_num = 1
 sid_width = 110
@@ -117,8 +120,11 @@ for f_test in glob.glob("out/*.png"):
     img_all = np.concatenate((img_all, img_clear), axis=0)
     img_all = np.concatenate((img_all, img_now), axis=0)
     f_j += 1
+    #
+    if not os.path.exists('big'+os.sep+movieSettings.movieName):
+        os.makedirs('big'+os.sep+movieSettings.movieName)
     if f_j%60 == 0 and f_j>=60:
-        cv2.imwrite('out'+os.sep+'big'+str(big_num)+'.png', img_all)
+        cv2.imwrite('big'+os.sep+movieSettings.movieName+os.sep+'big'+str(big_num).zfill(2)+'.png', img_all)
         img_all = None
         big_num += 1
 

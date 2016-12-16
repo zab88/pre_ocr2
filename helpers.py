@@ -60,8 +60,10 @@ def pull_text_left(img):
         return img
     return img_out
 
-def make_xlsx(fps):
-    workbook = xlsxwriter.Workbook('out.xlsx')
+def make_xlsx(fps, movieName):
+    if not os.path.exists('xlsx'+os.sep+movieName):
+        os.makedirs('xlsx'+os.sep+movieName)
+    workbook = xlsxwriter.Workbook('xlsx'+os.sep+movieName+os.sep+'out.xlsx')
     worksheet = workbook.add_worksheet()
     worksheet.set_column(1, 2, 12)
     worksheet.set_column(3, 4, 100)

@@ -10,6 +10,7 @@ class MovieSettings:
     origin_path = None
     is2lines = False
     minLetterArea = None
+    movieName = 'unnamed'
     def __init__(self):
         pass
     def read_settings(self, path2ini):
@@ -37,3 +38,6 @@ class MovieSettings:
 
     def set_origin_path(self, origin_path):
         MovieSettings.origin_path = origin_path
+
+    def set_movie_name(self, movieName):
+        MovieSettings.movieName = movieName
