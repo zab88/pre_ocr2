@@ -65,7 +65,7 @@ class MovieTimeline:
             frame = cv2.imread(frame_img)
             frame_number += 1
             if 0==frame_number%5000:
-                print('processed {} frames'.format(frame_number))
+                print('processed {} frames of {}'.format(frame_number, self.settings.movieName))
             if frame_prev is None:
                 frame_prev = frame
                 continue

@@ -61,9 +61,9 @@ def pull_text_left(img):
     return img_out
 
 def make_xlsx(fps, movieName):
-    if not os.path.exists('xlsx'+os.sep+movieName):
-        os.makedirs('xlsx'+os.sep+movieName)
-    workbook = xlsxwriter.Workbook('xlsx'+os.sep+movieName+os.sep+'out.xlsx')
+    # if not os.path.exists('xlsx'+os.sep+movieName):
+    #     os.makedirs('xlsx'+os.sep+movieName)
+    workbook = xlsxwriter.Workbook('xlsx'+os.sep+movieName+'.xlsx')
     worksheet = workbook.add_worksheet()
     worksheet.set_column(1, 2, 12)
     worksheet.set_column(3, 4, 100)
@@ -92,3 +92,44 @@ def make_xlsx(fps, movieName):
         worksheet.insert_image('D'+str(j+1), 'origin/'+os.path.basename(f_test))
         j += 1
     workbook.close()
+
+def make_big(movieName):
+    img_all = None
+    f_j = 0
+    big_num = 1
+    sid_width = 110
+    for f_test in glob.glob("out/*.png"):
+        if 'big' in os.path.basename(f_test):
+            continue
+        if img_all is None:
+            img_all = cv2.imread(f_test, 0)
+            img_all = pull_text_left(img_all)
+            # cv2.imshow('asdf', img_all)
+            # cv2.waitKey()
+            # exit()
+            # adding hmsd
+            h, w = img_all.shape[:2]
+            img_clear = np.ones((h, w+sid_width), np.uint8)*255
+            img_hmsd = np.ones((h, sid_width), np.uint8)*255
+            cv2.putText(img_hmsd, str(1000+f_j), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            img_all = np.concatenate((img_hmsd, img_all), axis=1)
+            f_j += 1
+            continue
+        img_now = cv2.imread(f_test, 0)
+        img_now = pull_text_left(img_now)
+        img_hmsd = np.ones((h, sid_width), np.uint8)*255
+        cv2.putText(img_hmsd, str(1000+f_j), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+        img_now = np.concatenate((img_hmsd, img_now), axis=1)
+
+        img_all = np.concatenate((img_all, img_clear), axis=0)
+        img_all = np.concatenate((img_all, img_now), axis=0)
+        f_j += 1
+        #
+        if not os.path.exists('big'+os.sep+movieName):
+            os.makedirs('big'+os.sep+movieName)
+        if f_j%60 == 0 and f_j>=60:
+            cv2.imwrite('big'+os.sep+movieName+os.sep+'big'+str(big_num).zfill(2)+'.png', img_all)
+            img_all = None
+            big_num += 1
+    # the rest
+    cv2.imwrite('out'+os.sep+'big'+str(big_num)+'.png', img_all)
