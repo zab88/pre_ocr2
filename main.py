@@ -22,6 +22,10 @@ if not os.path.isfile(path_to_movie_or_images):
     if len(glob.glob(path_to_movie_or_images)) == 0:
         print('not found <path_to_movie_or_images>')
         sys.exit()
+big_size = None
+if len(sys.argv)==4:
+    if sys.argv[3].isdigit():
+        big_size = int(sys.argv[3])
 
 # is one folder or many sub-folders?
 is_one_folder = False
@@ -51,6 +55,8 @@ movieSettings = mv.MovieSettings()
 movieSettings.read_settings(path_to_settings_ini_file)
 movieSettings.set_out_path(current_dir+os.sep+'out'+os.sep)
 movieSettings.set_origin_path(current_dir+os.sep+'origin'+os.sep)
+if big_size is not None:
+    movieSettings.set_big_size(big_size)
 
 if is_one_folder:
     print('one folder start')
@@ -64,7 +70,8 @@ if is_one_folder:
     # big images and xlsx
     # movieSettings.fps = 25.0
     hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
-    hh.make_big(movieSettings.movieName)
+    hh.make_big(movieSettings.movieName, movieSettings.bigSize)
+    hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)
 else:
     print('many folders start')
     for sub_dir in glob.glob(path_to_movie_or_images+os.sep+'*'+os.sep):
@@ -80,4 +87,5 @@ else:
         timeline = mt.MovieTimeline(movieSettings)
         timeline.process()
         hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
-        hh.make_big(movieSettings.movieName)
+        hh.make_big(movieSettings.movieName, movieSettings.bigSize)
+        hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)

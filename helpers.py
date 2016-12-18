@@ -58,7 +58,7 @@ def pull_text_left(img):
         break
     if img_out is None:
         return img
-    return img_out
+    return img_out, i
 
 def make_xlsx(fps, movieName):
     # if not os.path.exists('xlsx'+os.sep+movieName):
@@ -93,17 +93,17 @@ def make_xlsx(fps, movieName):
         j += 1
     workbook.close()
 
-def make_big(movieName):
+def make_big(movieName, bigSize=60):
     img_all = None
     f_j = 0
     big_num = 1
-    sid_width = 110
+    sid_width = 130
     for f_test in glob.glob("out/*.png"):
         if 'big' in os.path.basename(f_test):
             continue
         if img_all is None:
             img_all = cv2.imread(f_test, 0)
-            img_all = pull_text_left(img_all)
+            img_all = pull_text_left(img_all)[0]
             # cv2.imshow('asdf', img_all)
             # cv2.waitKey()
             # exit()
@@ -111,25 +111,83 @@ def make_big(movieName):
             h, w = img_all.shape[:2]
             img_clear = np.ones((h, w+sid_width), np.uint8)*255
             img_hmsd = np.ones((h, sid_width), np.uint8)*255
-            cv2.putText(img_hmsd, str(1000+f_j), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            cv2.putText(img_hmsd, str(1000+f_j)+'A', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
             img_all = np.concatenate((img_hmsd, img_all), axis=1)
             f_j += 1
             continue
         img_now = cv2.imread(f_test, 0)
-        img_now = pull_text_left(img_now)
+        img_now = pull_text_left(img_now)[0]
         img_hmsd = np.ones((h, sid_width), np.uint8)*255
-        cv2.putText(img_hmsd, str(1000+f_j), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+        cv2.putText(img_hmsd, str(1000+f_j)+'A', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
         img_now = np.concatenate((img_hmsd, img_now), axis=1)
 
         img_all = np.concatenate((img_all, img_clear), axis=0)
         img_all = np.concatenate((img_all, img_now), axis=0)
         f_j += 1
         #
-        if not os.path.exists('big'+os.sep+movieName):
-            os.makedirs('big'+os.sep+movieName)
-        if f_j%60 == 0 and f_j>=60:
-            cv2.imwrite('big'+os.sep+movieName+os.sep+'big'+str(big_num).zfill(2)+'.png', img_all)
+        # if not os.path.exists('big'+os.sep+movieName):
+        #     os.makedirs('big'+os.sep+movieName)
+        if f_j%bigSize == 0 and f_j>=bigSize:
+            cv2.imwrite('big'+os.sep+movieName+str(big_num).zfill(2)+'.png', img_all)
             img_all = None
             big_num += 1
     # the rest
-    cv2.imwrite('out'+os.sep+'big'+str(big_num)+'.png', img_all)
+    cv2.imwrite('big'+os.sep+movieName+str(big_num).zfill(2)+'.png', img_all)
+
+def make_big_origin(movieName, bigSize=60):
+    '''
+    make JPG images, not png
+    :param movieName:
+    :return:
+    '''
+    img_all = None
+    f_j = 0
+    big_num = 1
+    sid_width = 130
+    for f_test in glob.glob("origin/*.png"):
+        if 'big' in os.path.basename(f_test):
+            continue
+        if img_all is None:
+            img_all = cv2.imread(f_test, 0)
+            h, w = img_all.shape[:2]
+            img_all = (255-img_all)
+            # cutting from left and right
+            path_to_bin = f_test.replace('origin'+os.sep+os.path.basename(f_test), 'out'+os.sep+os.path.basename(f_test))
+            img_bin = cv2.imread(path_to_bin, 0)
+            _, offset_left = pull_text_left(img_bin.copy())
+            _, offset_right = pull_text_left(cv2.flip(img_bin.copy(), 1)) # flip horizontal
+            img_with_offset = np.ones((h, w), np.uint8)*255
+            img_with_offset[:, :w-offset_left-offset_right] = img_all[:, offset_left:w-offset_right]
+            img_all = img_with_offset
+
+            img_clear = np.ones((h, w+sid_width), np.uint8)*255
+            img_hmsd = np.ones((h, sid_width), np.uint8)*255
+            cv2.putText(img_hmsd, str(1000+f_j)+'A', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            img_all = np.concatenate((img_hmsd, img_all), axis=1)
+            f_j += 1
+            continue
+        img_now = cv2.imread(f_test, 0)
+        img_now = (255-img_now)
+        # cutting from left and right, based on bin img
+        path_to_bin = f_test.replace('origin'+os.sep+os.path.basename(f_test), 'out'+os.sep+os.path.basename(f_test))
+        img_bin = cv2.imread(path_to_bin, 0)
+        _, offset_left = pull_text_left(img_bin.copy())
+        _, offset_right = pull_text_left(cv2.flip(img_bin.copy(), 1)) # flip horizontal
+        img_with_offset = np.ones((h, w), np.uint8)*255
+        img_with_offset[:, :w-offset_left-offset_right] = img_now[:, offset_left:w-offset_right]
+        img_now = img_with_offset
+
+        img_hmsd = np.ones((h, sid_width), np.uint8)*255
+        cv2.putText(img_hmsd, str(1000+f_j)+'A', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+        img_now = np.concatenate((img_hmsd, img_now), axis=1)
+
+        img_all = np.concatenate((img_all, img_clear), axis=0)
+        img_all = np.concatenate((img_all, img_now), axis=0)
+        f_j += 1
+
+        if f_j%bigSize == 0 and f_j>=bigSize:
+            cv2.imwrite('big'+os.sep+movieName+str(big_num).zfill(2)+'.jpg', img_all)
+            img_all = None
+            big_num += 1
+    # the rest
+    cv2.imwrite('big'+os.sep+movieName+str(big_num).zfill(2)+'.jpg', img_all)

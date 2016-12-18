@@ -11,6 +11,7 @@ class MovieSettings:
     is2lines = False
     minLetterArea = None
     movieName = 'unnamed'
+    bigSize = 60
     def __init__(self):
         pass
     def read_settings(self, path2ini):
@@ -41,3 +42,6 @@ class MovieSettings:
 
     def set_movie_name(self, movieName):
         MovieSettings.movieName = movieName
+
+    def set_big_size(self, bigSize):
+        self.bigSize = bigSize
