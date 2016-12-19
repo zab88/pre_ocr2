@@ -60,19 +60,32 @@ def pull_text_left(img):
         return img
     return img_out, i
 
+def img_strip(bin_path):
+    img_bin = cv2.imread(bin_path, 0)
+    # img_bin = (255-img_bin)
+    h, w = img_bin.shape[:2]
+    # cutting from left and right, based on bin img
+    img_now = cv2.imread('origin'+os.sep+os.path.basename(bin_path), 0)
+
+    _, offset_left = pull_text_left(img_bin.copy())
+    _, offset_right = pull_text_left(cv2.flip(img_bin.copy(), 1)) # flip horizontal
+    offset_left = max(0, offset_left-5)
+    offset_right = max(0, offset_right-5)
+    img_now = img_now[:, offset_left:w-offset_right]
+    return (255-img_now), h
+
 def make_xlsx(fps, movieName):
     # if not os.path.exists('xlsx'+os.sep+movieName):
     #     os.makedirs('xlsx'+os.sep+movieName)
     workbook = xlsxwriter.Workbook('xlsx'+os.sep+movieName+'.xlsx')
     worksheet = workbook.add_worksheet()
-    worksheet.set_column(1, 2, 12)
-    worksheet.set_column(3, 4, 100)
+    worksheet.set_column(0, 1, 12)
+    worksheet.set_column(2, 2, 80)
+    worksheet.set_column(3, 3, 50)
+    worksheet.set_column(4, 4, 80)
 
     j = 0
     for f_test in glob.glob("out/*.png"):
-        if 'big' in os.path.basename(f_test):
-            continue
-        # print(str(j+1000), getHMSD2(os.path.basename(f_test), fps))
         if fps is None:
             time_start = os.path.basename(f_test).replace('.png', '').split('_')[0].replace('-', ':')
             time_end = os.path.basename(f_test).replace('.png', '').split('_')[1].replace('-', ':')
@@ -82,14 +95,22 @@ def make_xlsx(fps, movieName):
         time_start = time_start[::-1].replace(':', '.', 1)[::-1] + '0'
         time_end = time_end[::-1].replace(':', '.', 1)[::-1] + '0'
 
-        worksheet.write('A'+str(j+1), str(j+1000))
-        worksheet.write('B'+str(j+1), time_start)
-        worksheet.write('C'+str(j+1), time_end)
+        # worksheet.write('A'+str(j+1), str(j+1000))
+        worksheet.write('A'+str(j+1), time_start)
+        worksheet.write('B'+str(j+1), time_end)
+
+        # worksheet.insert_image('D'+str(j+1), f_test)
+        worksheet.insert_image('C'+str(j+1), 'origin/'+os.path.basename(f_test))
+
+        # E col, like big.jpg
+        img_insert, h = img_strip(f_test)
+        path_img_insert = 'tmp'+os.sep+os.path.basename(f_test).replace('.png', '.jpg')
+        cv2.imwrite(path_img_insert, img_insert)
+        worksheet.insert_image('E'+str(j+1), path_img_insert)
 
         # image has big height
-        worksheet.set_row(j, 32)
-        # worksheet.insert_image('D'+str(j+1), f_test)
-        worksheet.insert_image('D'+str(j+1), 'origin/'+os.path.basename(f_test))
+        worksheet.set_row(j, h)
+
         j += 1
     workbook.close()
 
@@ -143,7 +164,7 @@ def make_big_origin(movieName, bigSize=60):
     img_all = None
     f_j = 0
     big_num = 1
-    sid_width = 130
+    sid_width = 1
     for f_test in glob.glob("origin/*.png"):
         if 'big' in os.path.basename(f_test):
             continue
@@ -156,6 +177,8 @@ def make_big_origin(movieName, bigSize=60):
             img_bin = cv2.imread(path_to_bin, 0)
             _, offset_left = pull_text_left(img_bin.copy())
             _, offset_right = pull_text_left(cv2.flip(img_bin.copy(), 1)) # flip horizontal
+            offset_left = max(0, offset_left-5)
+            offset_right = max(0, offset_right-5)
             img_with_offset = np.ones((h, w), np.uint8)*255
             img_with_offset[:, :w-offset_left-offset_right] = img_all[:, offset_left:w-offset_right]
             img_all = img_with_offset
@@ -173,6 +196,8 @@ def make_big_origin(movieName, bigSize=60):
         img_bin = cv2.imread(path_to_bin, 0)
         _, offset_left = pull_text_left(img_bin.copy())
         _, offset_right = pull_text_left(cv2.flip(img_bin.copy(), 1)) # flip horizontal
+        offset_left = max(0, offset_left-5)
+        offset_right = max(0, offset_right-5)
         img_with_offset = np.ones((h, w), np.uint8)*255
         img_with_offset[:, :w-offset_left-offset_right] = img_now[:, offset_left:w-offset_right]
         img_now = img_with_offset

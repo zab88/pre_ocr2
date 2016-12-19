@@ -36,7 +36,7 @@ path_to_settings_ini_file = os.path.abspath(path_to_settings_ini_file)
 path_to_movie_or_images = os.path.abspath(path_to_movie_or_images)
 
 # if directories does not exist, let's create them
-dirs_mast = ['out', 'origin', 'big', 'xlsx']
+dirs_mast = ['out', 'origin', 'tmp', 'big', 'xlsx']
 for d in dirs_mast:
     if not os.path.exists(d):
         os.makedirs(d)
@@ -45,6 +45,8 @@ for d in dirs_mast:
 for f_remove in glob.glob("out/*.png"):
     os.remove(f_remove)
 for f_remove in glob.glob("origin/*.png"):
+    os.remove(f_remove)
+for f_remove in glob.glob("tmp/*.jpg"):
     os.remove(f_remove)
 
 # Loading settings
@@ -70,7 +72,7 @@ if is_one_folder:
     # big images and xlsx
     # movieSettings.fps = 25.0
     hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
-    hh.make_big(movieSettings.movieName, movieSettings.bigSize)
+    # hh.make_big(movieSettings.movieName, movieSettings.bigSize)
     hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)
 else:
     print('many folders start')
@@ -80,6 +82,8 @@ else:
             os.remove(f_remove)
         for f_remove in glob.glob("origin/*.png"):
             os.remove(f_remove)
+        for f_remove in glob.glob("tmp/*.jpg"):
+            os.remove(f_remove)
 
         movieSettings.set_movie(sub_dir+os.sep+'*.jpg')
         movieSettings.set_movie_name(os.path.split(os.path.split(sub_dir)[0])[1])
@@ -87,5 +91,5 @@ else:
         timeline = mt.MovieTimeline(movieSettings)
         timeline.process()
         hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
-        hh.make_big(movieSettings.movieName, movieSettings.bigSize)
+        # hh.make_big(movieSettings.movieName, movieSettings.bigSize)
         hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)
