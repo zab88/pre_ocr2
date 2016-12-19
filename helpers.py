@@ -74,12 +74,13 @@ def img_strip(bin_path):
     img_now = img_now[:, offset_left:w-offset_right]
     return (255-img_now), h
 
-def make_xlsx(fps, movieName):
+def make_xlsx(fps, movieName, colsOrder):
     # if not os.path.exists('xlsx'+os.sep+movieName):
     #     os.makedirs('xlsx'+os.sep+movieName)
     workbook = xlsxwriter.Workbook('xlsx'+os.sep+movieName+'.xlsx')
     worksheet = workbook.add_worksheet()
-    worksheet.set_column(0, 1, 12)
+    worksheet.set_column(0, 0, 12)
+    worksheet.set_column(1, 1, 12)
     worksheet.set_column(2, 2, 80)
     worksheet.set_column(3, 3, 50)
     worksheet.set_column(4, 4, 80)
@@ -96,17 +97,29 @@ def make_xlsx(fps, movieName):
         time_end = time_end[::-1].replace(':', '.', 1)[::-1] + '0'
 
         # worksheet.write('A'+str(j+1), str(j+1000))
-        worksheet.write('A'+str(j+1), time_start)
-        worksheet.write('B'+str(j+1), time_end)
+        # worksheet.write('A'+str(j+1), time_start)
+        # worksheet.write('B'+str(j+1), time_end)
 
         # worksheet.insert_image('D'+str(j+1), f_test)
-        worksheet.insert_image('C'+str(j+1), 'origin/'+os.path.basename(f_test))
+        # worksheet.insert_image('C'+str(j+1), 'origin/'+os.path.basename(f_test))
 
         # E col, like big.jpg
         img_insert, h = img_strip(f_test)
         path_img_insert = 'tmp'+os.sep+os.path.basename(f_test).replace('.png', '.jpg')
         cv2.imwrite(path_img_insert, img_insert)
-        worksheet.insert_image('E'+str(j+1), path_img_insert)
+        # worksheet.insert_image('E'+str(j+1), path_img_insert)
+
+        for k, col in enumerate(['A', 'B', 'C', 'D', 'E']):
+            if colsOrder[k] == 'time_start':
+                worksheet.write(col+str(j+1), time_start)
+            elif colsOrder[k] == 'time_end':
+                worksheet.write(col+str(j+1), time_end)
+            elif colsOrder[k] == 'origin':
+                worksheet.insert_image(col+str(j+1), 'origin/'+os.path.basename(f_test))
+            elif colsOrder[k] == 'empty':
+                pass
+            elif colsOrder[k] == 'prepared':
+                worksheet.insert_image(col+str(j+1), path_img_insert)
 
         # image has big height
         worksheet.set_row(j, h)

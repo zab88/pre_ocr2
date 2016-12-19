@@ -71,7 +71,7 @@ if is_one_folder:
 
     # big images and xlsx
     # movieSettings.fps = 25.0
-    hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
+    hh.make_xlsx(movieSettings.fps, movieSettings.movieName, movieSettings.colsOrder)
     # hh.make_big(movieSettings.movieName, movieSettings.bigSize)
     hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)
 else:
@@ -90,6 +90,6 @@ else:
 
         timeline = mt.MovieTimeline(movieSettings)
         timeline.process()
-        hh.make_xlsx(movieSettings.fps, movieSettings.movieName)
+        hh.make_xlsx(movieSettings.fps, movieSettings.movieName, movieSettings.colsOrder)
         # hh.make_big(movieSettings.movieName, movieSettings.bigSize)
         hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)

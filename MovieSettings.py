@@ -12,6 +12,7 @@ class MovieSettings:
     minLetterArea = None
     movieName = 'unnamed'
     bigSize = 60
+    colsOrder = []
     def __init__(self):
         pass
     def read_settings(self, path2ini):
@@ -27,6 +28,9 @@ class MovieSettings:
         MovieSettings.is2lines = True if int(Config.get('Movie', 'cropLines'))==2 else False
         MovieSettings.useSymmetry = True if int(Config.get('Movie', 'useSymmetry'))==1 else False
         MovieSettings.minLetterArea = int(Config.get('Th', 'minLetterArea'))
+
+        for col in ['A', 'B', 'C', 'D', 'E']:
+            MovieSettings.colsOrder.append(Config.get('XLSX', col+'_col'))
 
     def set_movie(self, path2movie):
         if path2movie[-4:] in ['.mp4']:
