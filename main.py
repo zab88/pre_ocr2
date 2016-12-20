@@ -93,3 +93,9 @@ else:
         hh.make_xlsx(movieSettings.fps, movieSettings.movieName, movieSettings.colsOrder)
         # hh.make_big(movieSettings.movieName, movieSettings.bigSize)
         hh.make_big_origin(movieSettings.movieName, movieSettings.bigSize)
+
+    # renaming xlsx folder
+    try:
+        os.rename('xlsx', os.path.basename(path_to_movie_or_images))
+    except IOError as e:
+        print(e.errno, e)
