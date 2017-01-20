@@ -37,7 +37,7 @@ def readyClick():
             panelA = tk.Label(image=image_tk)
         panelA.image = image_tk
         # panelA.pack(side=tk.TOP, padx=10, pady=10)
-        panelA.grid(row=1, column=1, columnspan=2, padx=10, pady=10)
+        panelA.grid(row=1, column=1, columnspan=4, padx=10, pady=10)
     if not isInit:
         setRange(None)
 
@@ -65,10 +65,13 @@ def createBat():
     if isInit:
         return
     if karaoke_variable.get() == 'Lyrics':
-        command = 'main.exe {} {},{},{},{},{},{}\n'.format(subfolder_now + os.sep + '*.jpg',
+        command = 'main.exe {} {},{},{},{},{},{}'.format(subfolder_now + os.sep + '*.jpg',
             h_lower.get(), s_lower.get(), v_lower.get(),
             h_upper.get(), s_upper.get(), v_upper.get()
         )
+        if line_variable.get() == 'One line':
+            command += ' 1'
+        command += '\n'
     else:
         ini = """[Movie]
 cropX: [0, 0]
@@ -141,18 +144,22 @@ h_upper.set(200)
 s_upper.set(200)
 v_upper.set(255)
 
-h_lower.grid(row=2, column=1)
-s_lower.grid(row=3, column=1)
-v_lower.grid(row=4, column=1)
-h_upper.grid(row=2, column=2)
-s_upper.grid(row=3, column=2)
-v_upper.grid(row=4, column=2)
+h_lower.grid(row=2, column=1, columnspan=2)
+s_lower.grid(row=3, column=1, columnspan=2)
+v_lower.grid(row=4, column=1, columnspan=2)
+h_upper.grid(row=2, column=3, columnspan=2)
+s_upper.grid(row=3, column=3, columnspan=2)
+v_upper.grid(row=4, column=3, columnspan=2)
 
 button = tk.Button(root, text = 'Press if ready', command=readyClick)
-button.grid(row=5, column=2, pady=20)
+button.grid(row=5, column=3, pady=20, columnspan=2)
 
 karaoke_variable = tk.StringVar(value='Lyrics')
 karaoke = tk.OptionMenu(root, karaoke_variable, 'Subtitle', 'Lyrics')
 karaoke.grid(row=5, column=1, pady=20)
+
+line_variable = tk.StringVar(value='One line')
+line = tk.OptionMenu(root, line_variable, 'One line', 'Two lines')
+line.grid(row=5, column=2, pady=20)
 
 root.mainloop()
