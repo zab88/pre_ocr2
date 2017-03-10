@@ -30,6 +30,7 @@ def readyClick():
         sys.exit()
     else:
         img = cv2.imread(fn, True)
+        img = cv2.pyrUp(img)
         imagePIL = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         imagePIL = Image.fromarray(imagePIL)
         image_tk = ImageTk.PhotoImage(imagePIL)
@@ -40,6 +41,19 @@ def readyClick():
         panelA.grid(row=1, column=1, columnspan=4, padx=10, pady=10)
     if not isInit:
         setRange(None)
+
+def readyClickAll():
+    if not isInit:
+        # creating .bat for first
+        createBat()
+        fn = getNext000()
+        while fn is not None:
+            createBat()
+            fn = getNext000()
+
+    tkMessageBox.showinfo('Done!', 'final .bat created')
+    sys.exit()
+    createFinalBat()
 
 def setRange(event):
     lower = np.array([h_lower.get(), s_lower.get(), v_lower.get()])
@@ -151,8 +165,11 @@ h_upper.grid(row=2, column=3, columnspan=2)
 s_upper.grid(row=3, column=3, columnspan=2)
 v_upper.grid(row=4, column=3, columnspan=2)
 
-button = tk.Button(root, text = 'Press if ready', command=readyClick)
-button.grid(row=5, column=3, pady=20, columnspan=2)
+button = tk.Button(root, text = 'Press for next', command=readyClick)
+button.grid(row=5, column=3, pady=20) # columnspan=2
+
+button = tk.Button(root, text = 'Press for all', command=readyClickAll)
+button.grid(row=5, column=4, pady=20)
 
 karaoke_variable = tk.StringVar(value='Lyrics')
 karaoke = tk.OptionMenu(root, karaoke_variable, 'Subtitle', 'Lyrics')
