@@ -51,9 +51,9 @@ def readyClickAll():
             createBat()
             fn = getNext000()
 
+    createFinalBat()
     tkMessageBox.showinfo('Done!', 'final .bat created')
     sys.exit()
-    createFinalBat()
 
 def setRange(event):
     lower = np.array([h_lower.get(), s_lower.get(), v_lower.get()])
@@ -123,6 +123,8 @@ def createFinalBat():
         with open(subfolder + '000000.bat', 'r') as bat_now:
             full_text += ''.join(bat_now.readlines())
     with open('final.bat', 'w+') as final_bat:
+        final_bat.write(full_text)
+    with open(path_to_subfolders + os.sep + 'final.bat', 'w+') as final_bat:
         final_bat.write(full_text)
 
 subfolder_now = None
